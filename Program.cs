@@ -130,6 +130,9 @@ namespace Snake
             Point food = foodCreator.CreateFood();
             food.Draw();
 
+            var scoreManager = new ScoreManager(difficulty);
+            scoreManager.Draw(85, 1); // например, в левом верхнем углу
+
             /*SoundManager soundMgr = new SoundManager();
             soundMgr.Enabled = soundOn;*/
 
@@ -147,6 +150,8 @@ namespace Snake
 
                 if (snake.Eat(food))
                 {
+                    scoreManager.AddPoint();
+                    scoreManager.Draw(85, 1);
                     food = foodCreator.CreateFood();
                     food.Draw();
                     /*soundMgr.PlayEat();*/

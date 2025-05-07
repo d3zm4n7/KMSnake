@@ -1,40 +1,48 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Snake
 {
+    /// <summary>
+    /// Управляет подсчётом очков в зависимости от уровня сложности:
+    /// Easy = 1 очко за еду;
+    /// Normal = 2;
+    /// Hard = 3.
+    /// </summary>
     public class ScoreManager
     {
+        private readonly int pointsPerFood;
         public int Score { get; private set; }
 
-        public void AddPoints(int amount)
+        /// <param name="difficulty">0 = Easy, 1 = Normal, 2 = Hard</param>
+        public ScoreManager(int difficulty)
         {
-            Score += amount;
-        }
-
-        public void SaveScore(string playerName)
-        {
-            string line = $"{playerName};{Score};{DateTime.Now}";
-            File.AppendAllText("results.txt", line + Environment.NewLine);
-        }
-
-        public static string[] GetTopResults(int count)
-        {
-            if (!File.Exists("results.txt"))
-                return new string[0];
-
-            var lines = File.ReadAllLines("results.txt");
-            Array.Sort(lines, (a, b) =>
-                int.Parse(b.Split(';')[1]).CompareTo(int.Parse(a.Split(';')[1]))); // по убыванию очков
-            return lines.Length > count ? lines[..count] : lines;
-        }
-
-        public void Reset()
-        {
+            // Настраиваем вес очка в зависимости от сложности
+            pointsPerFood = difficulty switch
+            {
+                0 => 1,
+                2 => 3,
+                _ => 2, // Normal
+            };
             Score = 0;
+        }
+
+        /// <summary>
+        /// При поедании еды добавляет нужное количество очков.
+        /// </summary>
+        public void AddPoint()
+        {
+            Score += pointsPerFood;
+        }
+
+        /// <summary>
+        /// Рисует текущий счёт в консоли в указанной позиции.
+        /// </summary>
+        /// <param name="x">колонка</param>
+        /// <param name="y">строка</param>
+        public void Draw(int x, int y)
+        {
+            Console.SetCursorPosition(x, y);
+            Console.Write($"Score: {Score}");
         }
     }
 }
